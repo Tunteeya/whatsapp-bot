@@ -3,11 +3,17 @@
 
 $verify_token = "my_secret_token_123";
 
+
+// ==============================
+// WEBHOOK VERIFICATION
+// ==============================
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    $mode = $_GET['hub.mode'] ?? '';
-    $token = $_GET['hub.verify_token'] ?? '';
-    $challenge = $_GET['hub.challenge'] ?? '';
+    // PHP may convert dots (.) in parameter names to underscores (_)
+    $mode = $_GET['hub_mode'] ?? $_GET['hub.mode'] ?? '';
+    $token = $_GET['hub_verify_token'] ?? $_GET['hub.verify_token'] ?? '';
+    $challenge = $_GET['hub_challenge'] ?? $_GET['hub.challenge'] ?? '';
 
     if ($mode === 'subscribe' && $token === $verify_token) {
         http_response_code(200);
@@ -19,6 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     echo 'Forbidden';
     exit;
 }
+
+
+// ==============================
+// RECEIVE WEBHOOK POST
+// ==============================
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -35,6 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+
+// ==============================
+// OTHER REQUESTS
+// ==============================
+
 http_response_code(404);
 echo 'Not Found';
+
+
 
